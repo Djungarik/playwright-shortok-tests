@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { NavigationPage } from "../page-objects/navigationPage";
+import { CreatePostPage } from "../page-objects/createPostPage";
+import { EditProfilePage } from "../page-objects/editProfilePage";
+import { on } from "events";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -9,23 +12,23 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("create a post", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
-  navigationPage.createPostPage();
+  const navigateTo = new NavigationPage(page);
+  const onCreatePostPage = new CreatePostPage(page);
 
-  await page.getByLabel("Caption").fill("Test caption");
+  await navigateTo.createPostPage();
 
-  await page.setInputFiles('input[type="file"]', "./test-data/test-image.jpg");
-
-  await page.getByLabel("Add Location").fill("Test location");
-
-  await expect(page.getByPlaceholder("Art, Expression, Learn")).toHaveValue(
-    "Facial expression,Cartoon,Clip art,Fictional character,Graphics,Animated cartoon,Animation"
+  await onCreatePostPage.createPostWithCaptionImageLocation(
+    "Test caption",
+    "./test-data/test-image.jpg",
+    "Test location"
   );
 
-  await page.getByRole("button", { name: "Create Post" }).click();
-
-  await expect(page.locator(".home-posts li").first()).toContainText(
+  await expect(page.getByTestId("home-post-caption").first()).toContainText(
     "Test caption"
+  );
+
+  await expect(page.getByTestId("home-post-tags").first()).toContainText(
+    "#Facialexpression#Cartoon#Clipart#Fictionalcharacter#Graphics#Animatedcartoon#Animation"
   );
 });
 
@@ -41,7 +44,7 @@ test("like a post", async ({ page }) => {
 });
 
 test("save a post", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
+  const navigateTo = new NavigationPage(page);
 
   await page.locator(".home-posts").getByAltText("post image").first().click();
 
@@ -49,7 +52,7 @@ test("save a post", async ({ page }) => {
 
   await page.getByAltText("share").click();
 
-  navigationPage.savedPage();
+  await navigateTo.savedPage();
   await page.locator(".grid-container li").first().click();
 
   const postURLFromSaved = page.url();
@@ -58,16 +61,16 @@ test("save a post", async ({ page }) => {
 });
 
 test("delete a post", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
-  navigationPage.createPostPage();
+  const navigateTo = new NavigationPage(page);
+  const onCreatePostPage = new CreatePostPage(page);
 
-  await page.getByLabel("Caption").fill("Delete Me");
-  await page.setInputFiles('input[type="file"]', "./test-data/test-image.jpg");
-  await page.getByLabel("Add Location").fill("Test location");
-  await expect(page.getByPlaceholder("Art, Expression, Learn")).toHaveValue(
-    "Facial expression,Cartoon,Clip art,Fictional character,Graphics,Animated cartoon,Animation"
+  await navigateTo.createPostPage();
+
+  await onCreatePostPage.createPostWithCaptionImageLocation(
+    "Delete Me",
+    "./test-data/test-image.jpg",
+    "Test location"
   );
-  await page.getByRole("button", { name: "Create Post" }).click();
 
   await page.waitForTimeout(1000);
 
@@ -80,8 +83,8 @@ test("delete a post", async ({ page }) => {
 });
 
 test("search for a post", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
-  navigationPage.explorePage();
+  const navigateTo = new NavigationPage(page);
+  await navigateTo.explorePage();
 
   await page.getByPlaceholder("Search by caption, tags").fill("car");
 
@@ -91,34 +94,31 @@ test("search for a post", async ({ page }) => {
 });
 
 test("edit profile", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
+  const navigateTo = new NavigationPage(page);
+  const onEditProfilePage = new EditProfilePage(page);
 
   const newName = "Test Name Edit";
   const newBio = "Test Bio123!@# Edit";
 
-  navigationPage.userProfilePage();
+  await navigateTo.userProfilePage();
 
   await page
     .locator(".profile-inner_container")
     .getByText("Edit Profile")
     .click();
 
-  await page.setInputFiles('input[type="file"]', "./test-data/test-avatar.jpg");
-
-  await page.locator('input[name="name"]:not([disabled])').clear();
-  await page.getByLabel("Bio").clear();
-
-  await page.locator('input[name="name"]:not([disabled])').fill(newName);
-  await page.getByLabel("Bio").fill(newBio);
-
-  await page.getByRole("button", { name: "Update Profile" }).click();
+  await onEditProfilePage.editProfileWithNewAvatarNameBio(
+    "./test-data/test-avatar.jpg",
+    newName,
+    newBio
+  );
 
   await expect(page.locator(".profile-name")).toHaveText(newName);
   await expect(page.locator(".profile-bio")).toHaveText(newBio);
 });
 
 test("create a new account", async ({ page }) => {
-  const navigationPage = new NavigationPage(page);
+  const navigateTo = new NavigationPage(page);
 
   const date = new Date();
   const month = date.getMonth() + 1;
@@ -129,7 +129,7 @@ test("create a new account", async ({ page }) => {
   const username = `test${year}${month}${day}${randomNumber}`;
   const userEmail = `${username}@test.com`;
 
-  navigationPage.logout();
+  await navigateTo.logout();
 
   await page.getByRole("link", { name: "Sign up" }).click();
 
@@ -143,7 +143,7 @@ test("create a new account", async ({ page }) => {
     `Test User@${username}`
   );
 
-  navigationPage.logout();
+  await navigateTo.logout();
 
   await page.getByLabel("Email").fill(userEmail);
   await page.getByLabel("Password").fill("Test1234!");
