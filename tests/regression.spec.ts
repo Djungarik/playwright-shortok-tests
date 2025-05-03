@@ -34,12 +34,24 @@ test("create a post", async ({ page }) => {
 test("like a post", async ({ page }) => {
   await page.locator(".home-posts").getByAltText("post image").first().click();
 
-  let likesCounter = await page.locator(".likeCounter").textContent();
-  let likes = parseInt(likesCounter || "0");
+  const likeButton = page.getByAltText("like");
+  const likeCounter = page.locator(".likeCounter");
 
-  await page.getByAltText("like").click();
+  const countText = await likeCounter.textContent();
+  const initialLikes = parseInt(countText || "0");
+  const isLiked =
+    (await likeButton.getAttribute("src")) === "/assets/icons/liked.svg";
 
-  expect(likes).toEqual(likes++);
+  await likeButton.click();
+
+  const updatedCountText = await likeCounter.textContent();
+  const updatedLikes = parseInt(updatedCountText || "0");
+
+  if (isLiked) {
+    expect(updatedLikes).toEqual(initialLikes - 1);
+  } else {
+    expect(updatedLikes).toEqual(initialLikes + 1);
+  }
 });
 
 test("save a post", async ({ page }) => {
