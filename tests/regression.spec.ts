@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test";
 import { NavigationPage } from "../page-objects/navigationPage";
 import { CreatePostPage } from "../page-objects/createPostPage";
 import { EditProfilePage } from "../page-objects/editProfilePage";
-import { on } from "events";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -49,11 +48,19 @@ test("save a post", async ({ page }) => {
   await page.locator(".home-posts").getByAltText("post image").first().click();
 
   const postURLFromHome = page.url();
+  const postPath = new URL(postURLFromHome).pathname;
+  const saveButton = page.getByAltText("share");
 
-  await page.getByAltText("share").click();
+  if ((await saveButton.getAttribute("src")) === "/assets/icons/save.svg") {
+    await saveButton.click();
+  }
 
   await navigateTo.savedPage();
-  await page.locator(".grid-container li").first().click();
+
+  const savedPost = page.locator(`.grid-container li a[href='${postPath}']`);
+
+  await expect(savedPost).toBeVisible();
+  await savedPost.click();
 
   const postURLFromSaved = page.url();
 
