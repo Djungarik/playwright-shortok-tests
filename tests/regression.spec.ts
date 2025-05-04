@@ -1,7 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { NavigationPage } from "../page-objects/navigationPage";
-import { CreatePostPage } from "../page-objects/createPostPage";
-import { EditProfilePage } from "../page-objects/editProfilePage";
+import { PageManager } from "../page-objects/pageManager";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -11,16 +9,17 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("create a post", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
-  const onCreatePostPage = new CreatePostPage(page);
+  const pm = new PageManager(page);
 
-  await navigateTo.createPostPage();
+  await pm.navigateTo().createPostPage();
 
-  await onCreatePostPage.createPostWithCaptionImageLocation(
-    "Test caption",
-    "./test-data/test-image.jpg",
-    "Test location"
-  );
+  await pm
+    .onCreatePostPage()
+    .createPostWithCaptionImageLocation(
+      "Test caption",
+      "./test-data/test-image.jpg",
+      "Test location"
+    );
 
   await expect(page.getByTestId("home-post-caption").first()).toContainText(
     "Test caption"
@@ -55,7 +54,7 @@ test("like a post", async ({ page }) => {
 });
 
 test("save a post", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
+  const pm = new PageManager(page);
 
   await page.locator(".home-posts").getByAltText("post image").first().click();
 
@@ -67,7 +66,7 @@ test("save a post", async ({ page }) => {
     await saveButton.click();
   }
 
-  await navigateTo.savedPage();
+  await pm.navigateTo().savedPage();
 
   const savedPost = page.locator(`.grid-container li a[href='${postPath}']`);
 
@@ -80,16 +79,17 @@ test("save a post", async ({ page }) => {
 });
 
 test("delete a post", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
-  const onCreatePostPage = new CreatePostPage(page);
+  const pm = new PageManager(page);
 
-  await navigateTo.createPostPage();
+  await pm.navigateTo().createPostPage();
 
-  await onCreatePostPage.createPostWithCaptionImageLocation(
-    "Delete Me",
-    "./test-data/test-image.jpg",
-    "Test location"
-  );
+  await pm
+    .onCreatePostPage()
+    .createPostWithCaptionImageLocation(
+      "Delete Me",
+      "./test-data/test-image.jpg",
+      "Test location"
+    );
 
   await page.waitForTimeout(1000);
 
@@ -102,8 +102,9 @@ test("delete a post", async ({ page }) => {
 });
 
 test("search for a post", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
-  await navigateTo.explorePage();
+  const pm = new PageManager(page);
+
+  await pm.navigateTo().explorePage();
 
   await page.getByPlaceholder("Search by caption, tags").fill("car");
 
@@ -113,31 +114,32 @@ test("search for a post", async ({ page }) => {
 });
 
 test("edit profile", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
-  const onEditProfilePage = new EditProfilePage(page);
+  const pm = new PageManager(page);
 
   const newName = "Test Name Edit";
   const newBio = "Test Bio123!@# Edit";
 
-  await navigateTo.userProfilePage();
+  await pm.navigateTo().userProfilePage();
 
   await page
     .locator(".profile-inner_container")
     .getByText("Edit Profile")
     .click();
 
-  await onEditProfilePage.editProfileWithNewAvatarNameBio(
-    "./test-data/test-avatar.jpg",
-    newName,
-    newBio
-  );
+  await pm
+    .onEditProfilePage()
+    .editProfileWithNewAvatarNameBio(
+      "./test-data/test-avatar.jpg",
+      newName,
+      newBio
+    );
 
   await expect(page.locator(".profile-name")).toHaveText(newName);
   await expect(page.locator(".profile-bio")).toHaveText(newBio);
 });
 
 test("create a new account", async ({ page }) => {
-  const navigateTo = new NavigationPage(page);
+  const pm = new PageManager(page);
 
   const date = new Date();
   const month = date.getMonth() + 1;
@@ -148,7 +150,7 @@ test("create a new account", async ({ page }) => {
   const username = `test${year}${month}${day}${randomNumber}`;
   const userEmail = `${username}@test.com`;
 
-  await navigateTo.logout();
+  await pm.navigateTo().logout();
 
   await page.getByRole("link", { name: "Sign up" }).click();
 
@@ -162,7 +164,7 @@ test("create a new account", async ({ page }) => {
     `Test User@${username}`
   );
 
-  await navigateTo.logout();
+  await pm.navigateTo().logout();
 
   await page.getByLabel("Email").fill(userEmail);
   await page.getByLabel("Password").fill("Test1234!");
