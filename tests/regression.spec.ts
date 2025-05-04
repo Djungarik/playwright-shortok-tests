@@ -107,14 +107,15 @@ test("delete a post", async ({ page }) => {
 
 test("search for a post", async ({ page }) => {
   const pm = new PageManager(page);
+  const searchCaption = "car";
 
   await pm.navigateTo().explorePage();
 
-  await page.getByPlaceholder("Search by caption, tags").fill("car");
+  await pm.onExplorePage().searchForPostByCaption(searchCaption);
 
   await page.locator(".grid-container li").first().click();
 
-  await expect(page.locator(".post-caption")).toContainText("car");
+  await expect(page.locator(".post-caption")).toContainText(searchCaption);
 });
 
 test("edit profile", async ({ page }) => {
