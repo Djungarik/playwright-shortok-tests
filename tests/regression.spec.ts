@@ -11,18 +11,26 @@ test.beforeEach(async ({ page }) => {
 test("create a post", async ({ page }) => {
   const pm = new PageManager(page);
 
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const day = date.getDate();
+  const randomNumber = Math.floor(Math.random() * 1000);
+
+  const postCaption = `Automation Caption ${year}${month}${day}${randomNumber}`;
+
   await pm.navigateTo().createPostPage();
 
   await pm
     .onCreatePostPage()
     .createPostWithCaptionImageLocation(
-      "Test caption",
+      postCaption,
       "./test-data/test-image.jpg",
       "Test location"
     );
 
   await expect(page.getByTestId("home-post-caption").first()).toContainText(
-    "Test caption"
+    postCaption
   );
 
   await expect(page.getByTestId("home-post-tags").first()).toContainText(
@@ -31,20 +39,16 @@ test("create a post", async ({ page }) => {
 });
 
 test("like a post", async ({ page }) => {
+  const pm = new PageManager(page);
+
   await page.locator(".home-posts").getByAltText("post image").first().click();
 
-  const likeButton = page.getByAltText("like");
-  const likeCounter = page.locator(".likeCounter");
+  const initialLikes = await pm.onPostPage().getLikeCount();
+  const isLiked = await pm.onPostPage().isPostLiked();
 
-  const countText = await likeCounter.textContent();
-  const initialLikes = parseInt(countText || "0");
-  const isLiked =
-    (await likeButton.getAttribute("src")) === "/assets/icons/liked.svg";
+  await pm.onPostPage().likePost();
 
-  await likeButton.click();
-
-  const updatedCountText = await likeCounter.textContent();
-  const updatedLikes = parseInt(updatedCountText || "0");
+  const updatedLikes = await pm.onPostPage().getLikeCount();
 
   if (isLiked) {
     expect(updatedLikes).toEqual(initialLikes - 1);
@@ -60,11 +64,8 @@ test("save a post", async ({ page }) => {
 
   const postURLFromHome = page.url();
   const postPath = new URL(postURLFromHome).pathname;
-  const saveButton = page.getByAltText("share");
 
-  if ((await saveButton.getAttribute("src")) === "/assets/icons/save.svg") {
-    await saveButton.click();
-  }
+  await pm.onPostPage().savePost();
 
   await pm.navigateTo().savedPage();
 
@@ -80,25 +81,28 @@ test("save a post", async ({ page }) => {
 
 test("delete a post", async ({ page }) => {
   const pm = new PageManager(page);
+  const postCaption = "Delete Me";
 
   await pm.navigateTo().createPostPage();
 
   await pm
     .onCreatePostPage()
     .createPostWithCaptionImageLocation(
-      "Delete Me",
+      postCaption,
       "./test-data/test-image.jpg",
       "Test location"
     );
 
-  await page.waitForTimeout(1000);
+  await expect(
+    page.locator(".home-posts").getByText(postCaption)
+  ).toBeVisible();
 
-  await page.getByText("Delete Me").click();
-  await page.getByAltText("delete").click();
+  await page.getByText(postCaption).click();
+  await pm.onPostPage().deletePost();
 
-  await page.waitForTimeout(5000);
-
-  await expect(page.getByText("Delete Me")).not.toBeAttached();
+  await expect(
+    page.locator(".home-posts").getByText(postCaption)
+  ).not.toBeVisible();
 });
 
 test("search for a post", async ({ page }) => {
