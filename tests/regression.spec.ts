@@ -3,9 +3,6 @@ import { PageManager } from "../page-objects/pageManager";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  await page.getByLabel("Email").fill("test2025040601@test.com");
-  await page.getByLabel("Password").fill("Test1234");
-  await page.getByRole("button", { name: "Log in" }).click();
 });
 
 test("create a post", async ({ page }) => {
@@ -99,7 +96,8 @@ test("save a post", async ({ page }) => {
 
 test("delete a post", async ({ page }) => {
   const pm = new PageManager(page);
-  const postCaption = "Delete Me";
+  const randomNumber = Math.floor(Math.random() * 1000);
+  const postCaption = `Delete Me ${randomNumber}`;
 
   await pm.navigateTo().createPostPage();
 
