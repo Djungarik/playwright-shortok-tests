@@ -4,6 +4,7 @@ import { CreatePostPage } from "./createPostPage";
 import { EditProfilePage } from "./editProfilePage";
 import { PostPage } from "./postPage";
 import { ExplorePage } from "./explorePage";
+import { ProfilePage } from "./profilePage";
 
 export class PageManager {
   private readonly page: Page;
@@ -12,6 +13,7 @@ export class PageManager {
   private readonly editProfilePage: EditProfilePage;
   private readonly postPage: PostPage;
   private readonly explorePage: ExplorePage;
+  private readonly profilePage: ProfilePage;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,6 +22,7 @@ export class PageManager {
     this.editProfilePage = new EditProfilePage(this.page);
     this.postPage = new PostPage(this.page);
     this.explorePage = new ExplorePage(this.page);
+    this.profilePage = new ProfilePage(this.page);
   }
 
   navigateTo() {
@@ -40,5 +43,9 @@ export class PageManager {
 
   onExplorePage() {
     return this.explorePage;
+  }
+
+  onProfilePage() {
+    return this.profilePage;
   }
 }
