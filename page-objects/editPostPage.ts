@@ -1,18 +1,18 @@
 import { Page } from "@playwright/test";
 import { HelperBase } from "./helperBase";
 
-export class CreatePostPage extends HelperBase {
+export class EditPostPage extends HelperBase {
   constructor(page: Page) {
     super(page);
   }
 
-  async createPostWithCaptionImageLocation(
+  async editPostWithCaptionImageLocation(
     caption: string,
     imagePath: string,
     location: string
   ) {
     await this.fillFieldsForPost(caption, imagePath, location);
 
-    await this.page.getByRole("button", { name: "Create Post" }).click();
+    await this.page.getByRole("button", { name: "Update Post" }).click();
   }
 }

@@ -19,6 +19,10 @@ export class PostPage {
     await this.page.getByAltText("delete").click();
   }
 
+  async editPost() {
+    await this.page.getByAltText("edit").click();
+  }
+
   async likePost() {
     await this.page.getByAltText("like").click();
   }

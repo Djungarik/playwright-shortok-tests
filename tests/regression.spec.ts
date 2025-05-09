@@ -38,6 +38,29 @@ test("create a post", async ({ page }) => {
   );
 });
 
+test("edit a post", async ({ page }) => {
+  const pm = new PageManager(page);
+  const postCaption = "Automation Edit Post";
+
+  await pm.navigateTo().userProfilePage();
+  await pm.onProfilePage().openTheFirstPost();
+  await pm.onPostPage().editPost();
+
+  await pm
+    .onEditPostPage()
+    .editPostWithCaptionImageLocation(
+      postCaption,
+      "./test-data/test-image.jpg",
+      "Test location"
+    );
+
+  await expect(page.locator(".post-caption")).toContainText(postCaption);
+
+  await expect(page.getByTestId("post-details-tags").first()).toContainText(
+    "#Facialexpression#Cartoon#Clipart#Fictionalcharacter#Graphics#Animatedcartoon#Animation"
+  );
+});
+
 test("like a post", async ({ page }) => {
   const pm = new PageManager(page);
 
@@ -126,10 +149,7 @@ test("edit profile", async ({ page }) => {
 
   await pm.navigateTo().userProfilePage();
 
-  await page
-    .locator(".profile-inner_container")
-    .getByText("Edit Profile")
-    .click();
+  await pm.onProfilePage().clickEditProfileButton();
 
   await pm
     .onEditProfilePage()

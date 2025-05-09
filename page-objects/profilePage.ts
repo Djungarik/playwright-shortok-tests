@@ -13,4 +13,8 @@ export class ProfilePage {
       .getByText("Edit Profile")
       .click();
   }
+
+  async openTheFirstPost() {
+    await this.page.locator(".grid-container li").first().click();
+  }
 }
