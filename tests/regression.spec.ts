@@ -10,14 +10,8 @@ test.beforeEach(async ({ page }) => {
 
 test("create a post", async ({ page }) => {
   const pm = new PageManager(page);
-
-  const date = new Date();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  const day = date.getDate();
-  const randomNumber = Math.floor(Math.random() * 1000);
-
-  const postCaption = `Automation Caption ${year}${month}${day}${randomNumber}`;
+  const todaysDate = pm.onCreatePostPage().getTodaysDateWithRandomNumber();
+  const postCaption = `Automation Caption ${todaysDate}`;
 
   await pm.navigateTo().createPostPage();
 
@@ -40,7 +34,8 @@ test("create a post", async ({ page }) => {
 
 test("edit a post", async ({ page }) => {
   const pm = new PageManager(page);
-  const postCaption = "Automation Edit Post";
+  const todaysDate = pm.onEditPostPage().getTodaysDateWithRandomNumber();
+  const postCaption = `Automation Edit ${todaysDate}`;
 
   await pm.navigateTo().userProfilePage();
   await pm.onProfilePage().openTheFirstPost();

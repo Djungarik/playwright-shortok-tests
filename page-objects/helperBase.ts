@@ -7,6 +7,17 @@ export class HelperBase {
     this.page = page;
   }
 
+  todaysDateWithRandomNumber() {
+    const date = new Date();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const day = date.getDate();
+    const randomNumber = Math.floor(Math.random() * 1000);
+    const todaysDate = `${year}${month}${day}${randomNumber}`;
+
+    return todaysDate;
+  }
+
   async fillFieldsForPost(
     caption: string,
     imagePath: string,

@@ -6,6 +6,10 @@ export class CreatePostPage extends HelperBase {
     super(page);
   }
 
+  getTodaysDateWithRandomNumber() {
+    return this.todaysDateWithRandomNumber();
+  }
+
   async createPostWithCaptionImageLocation(
     caption: string,
     imagePath: string,
