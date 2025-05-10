@@ -191,9 +191,7 @@ test.describe("Sign Up", () => {
 
     await pm.navigateTo().logout();
 
-    await page.getByLabel("Email").fill(userEmail);
-    await page.getByLabel("Password").fill(password);
-    await page.getByRole("button", { name: "Log in" }).click();
+    await pm.onLogInPage().populateEmailPasswordClickLogIn(userEmail, password);
 
     await expect(page.locator(".current-user-profile")).toHaveText(
       `${name}@${username}`

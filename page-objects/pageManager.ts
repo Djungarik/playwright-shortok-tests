@@ -7,6 +7,7 @@ import { PostPage } from "./postPage";
 import { ExplorePage } from "./explorePage";
 import { ProfilePage } from "./profilePage";
 import { SignUpPage } from "./signUpPage";
+import { LogInPage } from "./logInPage";
 
 export class PageManager {
   private readonly page: Page;
@@ -18,6 +19,7 @@ export class PageManager {
   private readonly explorePage: ExplorePage;
   private readonly profilePage: ProfilePage;
   private readonly signUpPage: SignUpPage;
+  private readonly logInPage: LogInPage;
 
   constructor(page: Page) {
     this.page = page;
@@ -29,6 +31,7 @@ export class PageManager {
     this.explorePage = new ExplorePage(this.page);
     this.profilePage = new ProfilePage(this.page);
     this.signUpPage = new SignUpPage(this.page);
+    this.logInPage = new LogInPage(this.page);
   }
 
   navigateTo() {
@@ -61,5 +64,9 @@ export class PageManager {
 
   onSignUpPage() {
     return this.signUpPage;
+  }
+
+  onLogInPage() {
+    return this.logInPage;
   }
 }
