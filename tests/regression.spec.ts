@@ -156,39 +156,47 @@ test("edit profile", async ({ page }) => {
   await expect(page.locator(".profile-bio")).toHaveText(newBio);
 });
 
-test("create a new account", async ({ page }) => {
-  const pm = new PageManager(page);
+test.describe("Sign Up", () => {
+  test.use({
+    storageState: { cookies: [], origins: [] },
+  });
 
-  const date = new Date();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  const day = date.getDate();
-  const randomNumber = Math.floor(Math.random() * 1000);
+  test("create a new account", async ({ page }) => {
+    const pm = new PageManager(page);
+    const todaysDate = pm.onSignUpPage().getTodaysDateWithRandomNumber();
 
-  const username = `test${year}${month}${day}${randomNumber}`;
-  const userEmail = `${username}@test.com`;
+    const name = `Test User ${todaysDate}`;
+    const username = `test${todaysDate}`;
+    const userEmail = `${username}@test.com`;
+    const password = "Test1234!";
 
-  await pm.navigateTo().logout();
+    if (await page.getByRole("heading", { name: "Home Feed" }).isVisible()) {
+      await pm.navigateTo().logout();
+    }
 
-  await page.getByRole("link", { name: "Sign up" }).click();
+    await page.getByRole("link", { name: "Sign up" }).click();
 
-  await page.getByLabel("Name", { exact: true }).fill("Test User");
-  await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Email").fill(userEmail);
-  await page.getByLabel("Password").fill("Test1234!");
-  await page.getByRole("button", { name: "Sign Up" }).click();
+    await pm
+      .onSignUpPage()
+      .populateNameUsernameEmailPasswordClickSignUp(
+        name,
+        username,
+        userEmail,
+        password
+      );
 
-  await expect(page.locator(".current-user-profile")).toHaveText(
-    `Test User@${username}`
-  );
+    await expect(page.locator(".current-user-profile")).toHaveText(
+      `${name}@${username}`
+    );
 
-  await pm.navigateTo().logout();
+    await pm.navigateTo().logout();
 
-  await page.getByLabel("Email").fill(userEmail);
-  await page.getByLabel("Password").fill("Test1234!");
-  await page.getByRole("button", { name: "Log in" }).click();
+    await page.getByLabel("Email").fill(userEmail);
+    await page.getByLabel("Password").fill(password);
+    await page.getByRole("button", { name: "Log in" }).click();
 
-  await expect(page.locator(".current-user-profile")).toHaveText(
-    `Test User@${username}`
-  );
+    await expect(page.locator(".current-user-profile")).toHaveText(
+      `${name}@${username}`
+    );
+  });
 });

@@ -15,7 +15,7 @@ export class CreatePostPage extends HelperBase {
     imagePath: string,
     location: string
   ) {
-    await this.fillFieldsForPost(caption, imagePath, location);
+    await this.populateFieldsForPost(caption, imagePath, location);
 
     await this.page.getByRole("button", { name: "Create Post" }).click();
   }

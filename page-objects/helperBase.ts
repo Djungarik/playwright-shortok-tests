@@ -18,7 +18,7 @@ export class HelperBase {
     return todaysDate;
   }
 
-  async fillFieldsForPost(
+  async populateFieldsForPost(
     caption: string,
     imagePath: string,
     location: string

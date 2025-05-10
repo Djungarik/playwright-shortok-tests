@@ -15,7 +15,7 @@ export class EditPostPage extends HelperBase {
     imagePath: string,
     location: string
   ) {
-    await this.fillFieldsForPost(caption, imagePath, location);
+    await this.populateFieldsForPost(caption, imagePath, location);
 
     await this.page.getByRole("button", { name: "Update Post" }).click();
   }
