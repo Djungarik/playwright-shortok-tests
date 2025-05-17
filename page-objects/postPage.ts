@@ -37,4 +37,8 @@ export class PostPage {
     const likeButton = this.page.getByAltText("like");
     return (await likeButton.getAttribute("src")) === "/assets/icons/liked.svg";
   }
+
+  async clickBackButton() {
+    await this.page.getByText("Back").click();
+  }
 }
