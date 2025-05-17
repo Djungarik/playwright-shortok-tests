@@ -1,32 +1,35 @@
 import { test, expect } from "@playwright/test";
 import { PageManager } from "../page-objects/pageManager";
+import data from "./images.json" assert { type: "json" };
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("create a post", async ({ page }) => {
+test.only("create posts", async ({ page }) => {
   const pm = new PageManager(page);
   const todaysDate = pm.onCreatePostPage().getTodaysDateWithRandomNumber();
   const postCaption = `Automation Caption ${todaysDate}`;
 
-  await pm.navigateTo().createPostPage();
+  for (const image of data.images) {
+    await pm.navigateTo().createPostPage();
 
-  await pm
-    .onCreatePostPage()
-    .createPostWithCaptionImageLocation(
-      postCaption,
-      "./test-data/test-image.jpg",
-      "Test location"
+    await pm
+      .onCreatePostPage()
+      .createPostWithCaptionImageLocation(
+        postCaption,
+        image.path,
+        image.location
+      );
+
+    await expect(page.getByTestId("home-post-caption").first()).toContainText(
+      postCaption
     );
 
-  await expect(page.getByTestId("home-post-caption").first()).toContainText(
-    postCaption
-  );
-
-  await expect(page.getByTestId("home-post-tags").first()).toContainText(
-    "#Facialexpression#Cartoon#Clipart#Fictionalcharacter#Graphics#Animatedcartoon#Animation"
-  );
+    await expect(page.getByTestId("home-post-tags").first()).toContainText(
+      image.hashtags
+    );
+  }
 });
 
 test("edit a post", async ({ page }) => {

@@ -1,0 +1,34 @@
+{
+  "images": [
+    {
+      "name": "dog",
+      "path": "./test-data/dog.jpg",
+      "hashtags": "#Facialexpression#Cartoon#Clipart#Fictionalcharacter#Graphics#Animatedcartoon#Animation",
+      "location": "park"
+    },
+    {
+      "name": "ticket",
+      "path": "./test-data/ticket.jpg",
+      "hashtags": "#Graphics",
+      "location": "concert"
+    },
+    {
+      "name": "book",
+      "path": "./test-data/book.jpg",
+      "hashtags": "#Red#Graphics#Clipart#Graphicdesign",
+      "location": "library"
+    },
+    {
+      "name": "t-shirt",
+      "path": "./test-data/t-shirt.jpg",
+      "hashtags": "#Sleeve#White#ActiveShirt#Graphics#Lineart",
+      "location": "store"
+    },
+    {
+      "name": "boat",
+      "path": "./test-data/boat.jpg",
+      "hashtags": "#Boat#Watercraft#Navalarchitecture#Clipart#Ship#Graphics#Watertransportation#Boatsandboating--Equipmentandsupplies#Graphicdesign",
+      "location": "lake"
+    }
+  ]
+}
