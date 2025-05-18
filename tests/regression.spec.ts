@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("create posts", async ({ page }) => {
   const pm = new PageManager(page);
-  const todaysDate = pm.onCreatePostPage().getTodaysDateWithRandomNumber();
+  const todaysDate = pm.onCreatePostPage().getTodaysDateWithCurrentTime();
   const postCaption = `Automation Caption ${todaysDate}`;
 
   for (const image of data.images) {
@@ -34,7 +34,7 @@ test("create posts", async ({ page }) => {
 
 test("edit a post", async ({ page }) => {
   const pm = new PageManager(page);
-  const todaysDate = pm.onEditPostPage().getTodaysDateWithRandomNumber();
+  const todaysDate = pm.onEditPostPage().getTodaysDateWithCurrentTime();
   const postCaption = `Automation Edit ${todaysDate}`;
   const dogImg = data.images[0];
 
@@ -171,7 +171,7 @@ test.describe("Sign Up", () => {
 
   test("create a new account", async ({ page }) => {
     const pm = new PageManager(page);
-    const todaysDate = pm.onSignUpPage().getTodaysDateWithRandomNumber();
+    const todaysDate = pm.onSignUpPage().getTodaysDateWithCurrentTime();
 
     const name = `Test User ${todaysDate}`;
     const username = `test${todaysDate}`;

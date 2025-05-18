@@ -6,8 +6,8 @@ export class EditPostPage extends HelperBase {
     super(page);
   }
 
-  getTodaysDateWithRandomNumber() {
-    return this.todaysDateWithRandomNumber();
+  getTodaysDateWithCurrentTime() {
+    return this.todaysDateWithCurrentTime();
   }
 
   async editPostWithCaptionImageLocation(

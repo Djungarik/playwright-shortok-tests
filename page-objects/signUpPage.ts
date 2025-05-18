@@ -6,8 +6,8 @@ export class SignUpPage extends HelperBase {
     super(page);
   }
 
-  getTodaysDateWithRandomNumber() {
-    return this.todaysDateWithRandomNumber();
+  getTodaysDateWithCurrentTime() {
+    return this.todaysDateWithCurrentTime();
   }
 
   async populateNameUsernameEmailPasswordClickSignUp(
