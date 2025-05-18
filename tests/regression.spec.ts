@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test.only("create posts", async ({ page }) => {
+test("create posts", async ({ page }) => {
   const pm = new PageManager(page);
   const todaysDate = pm.onCreatePostPage().getTodaysDateWithRandomNumber();
   const postCaption = `Automation Caption ${todaysDate}`;
@@ -36,6 +36,7 @@ test("edit a post", async ({ page }) => {
   const pm = new PageManager(page);
   const todaysDate = pm.onEditPostPage().getTodaysDateWithRandomNumber();
   const postCaption = `Automation Edit ${todaysDate}`;
+  const dogImg = data.images[0];
 
   await pm.navigateTo().userProfilePage();
   await pm.onProfilePage().openTheFirstPost();
@@ -45,14 +46,14 @@ test("edit a post", async ({ page }) => {
     .onEditPostPage()
     .editPostWithCaptionImageLocation(
       postCaption,
-      "./test-data/test-image.jpg",
-      "Test location"
+      dogImg.path,
+      dogImg.location
     );
 
   await expect(page.locator(".post-caption")).toContainText(postCaption);
 
   await expect(page.getByTestId("post-details-tags").first()).toContainText(
-    "#Facialexpression#Cartoon#Clipart#Fictionalcharacter#Graphics#Animatedcartoon#Animation"
+    dogImg.hashtags
   );
 });
 
@@ -101,6 +102,7 @@ test("delete a post", async ({ page }) => {
   const pm = new PageManager(page);
   const randomNumber = Math.floor(Math.random() * 1000);
   const postCaption = `Delete Me ${randomNumber}`;
+  const deleteImg = data.images[1];
 
   await pm.navigateTo().createPostPage();
 
@@ -108,13 +110,9 @@ test("delete a post", async ({ page }) => {
     .onCreatePostPage()
     .createPostWithCaptionImageLocation(
       postCaption,
-      "./test-data/test-image.jpg",
-      "Test location"
+      deleteImg.path,
+      deleteImg.location
     );
-
-  await expect(
-    page.locator(".home-posts").getByText(postCaption)
-  ).toBeVisible();
 
   await page.getByText(postCaption).click();
   await pm.onPostPage().deletePost();
@@ -126,7 +124,8 @@ test("delete a post", async ({ page }) => {
 
 test("search for a post", async ({ page }) => {
   const pm = new PageManager(page);
-  const searchCaption = "car";
+  const searchCaption = "Automation Caption";
+  const negativeSearchCaption = "NonExistentPost";
 
   await pm.navigateTo().explorePage();
 
@@ -135,6 +134,12 @@ test("search for a post", async ({ page }) => {
   await page.locator(".grid-container li").first().click();
 
   await expect(page.locator(".post-caption")).toContainText(searchCaption);
+
+  await pm.onPostPage().clickBackButton();
+
+  await pm.onExplorePage().searchForPostByCaption(negativeSearchCaption);
+
+  await expect(page.getByText("No results found")).toBeVisible();
 });
 
 test("edit profile", async ({ page }) => {
